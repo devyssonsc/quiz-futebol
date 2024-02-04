@@ -144,6 +144,7 @@ const sortQuestion = () => {
 
     for (let i = 0; i <= 3; i++) {
         let sortedAnswer = Math.floor(Math.random() * possibleAnswersCopy.length);
+        $divAnswers.children[i].classList.remove("clicked");
         $divAnswers.children[i].innerText = possibleAnswersCopy[sortedAnswer];
         possibleAnswersCopy.splice(sortedAnswer, 1);
     }
@@ -163,8 +164,7 @@ const sortQuestion = () => {
 
 $divAnswers.addEventListener("click", function(event) {
     if (event.target.tagName === "BUTTON") {
-        console.log(event.target.innerText);
-        console.log(event.target.innerText === questionsCopy[sortedQuestion].correctAnswer);
+        event.target.classList.add("clicked");
         if (event.target.innerText === questionsCopy[sortedQuestion].correctAnswer) {
             totalPoints += questionsCopy[sortedQuestion].points;
             alert("Correto");
