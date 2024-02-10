@@ -3,6 +3,7 @@ const $divAnswers = document.querySelector(".div-answers");
 const $levelQuestion = document.querySelector(".level-question");
 const $nextQuestion = document.querySelector("#next-question");
 const $seeResult = document.querySelector("#see-result");
+const $body = document.querySelector("body")
 
 const questionsList = [
     {
@@ -129,13 +130,16 @@ const questionsList = [
 
 let questionsCopy = [...questionsList]
 let sortedQuestion = 0;
-let totalPoints = 0
+let totalPoints = 0;
+let indexQuestion = 1;
 
 const sortQuestion = () => {
     sortedQuestion = Math.floor(Math.random() * (questionsCopy.length));
 
-    $question.innerText = questionsCopy[sortedQuestion].question;
+    $question.innerText = `${indexQuestion} - ${questionsCopy[sortedQuestion].question}`;
     $levelQuestion.innerText = questionsCopy[sortedQuestion].levelDifficulty;
+
+    indexQuestion++
 
     console.log(questionsCopy[sortedQuestion].question);
 
@@ -167,9 +171,9 @@ $divAnswers.addEventListener("click", function(event) {
         event.target.classList.add("clicked");
         if (event.target.innerText === questionsCopy[sortedQuestion].correctAnswer) {
             totalPoints += questionsCopy[sortedQuestion].points;
-            alert("Correto");
+            alert("Correto!")
         } else {
-            alert("Incorreto: A resposta certa é: " + questionsCopy[sortedQuestion].correctAnswer);
+            alert("Incorreto! A resposta certa é: " + questionsCopy[sortedQuestion].correctAnswer);
         }
 
         for (let i = 0; i < $divAnswers.children.length; i++){
