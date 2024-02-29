@@ -1,4 +1,4 @@
-const $question = document.querySelector(".question");
+const $label = document.querySelector(".label");
 const $divAnswers = document.querySelector(".div-answers");
 const $levelQuestion = document.querySelector(".level-question");
 const $nextQuestion = document.querySelector("#next-question");
@@ -133,89 +133,82 @@ const questions = async () => {
     const result = await fetch("http://localhost:3333/questions")
     .then((res) => res.json())
     .then((data) => {
-        console.log(data);
         return data;
     });  
 
     return result;
 }
 
-const response = questions();
-console.log(response);
+let questionsList;
+let sortedQuestion = 0;
+let totalPoints = 0;
+let indexQuestion = 1;
 
-// let questionsCopy = [...questionsList]
-// let sortedQuestion = 0;
-// let totalPoints = 0;
-// let indexQuestion = 1;
+const sortQuestion = async () => {
+    sortedQuestion = Math.floor(Math.random() * (questionsList.length));
 
-// const sortQuestion = () => {
-//     sortedQuestion = Math.floor(Math.random() * (questionsCopy.length));
+    $label.innerText = `${indexQuestion} - ${questionsList[sortedQuestion].label}`;
+    $levelQuestion.innerText = questionsList[sortedQuestion].leveldifficulty;
 
-//     $question.innerText = `${indexQuestion} - ${questionsCopy[sortedQuestion].question}`;
-//     $levelQuestion.innerText = questionsCopy[sortedQuestion].levelDifficulty;
+    indexQuestion++
 
-//     indexQuestion++
+    // Crie uma cópia da lista de respostas possíveis sem modificar a original
+    let possibleAnswersList = [...questionsList[sortedQuestion].possibleanswers];
 
-//     console.log(questionsCopy[sortedQuestion].question);
+    for (let i = 0; i <= 3; i++) {
+        let sortedAnswer = Math.floor(Math.random() * possibleAnswersList.length);
+        $divAnswers.children[i].classList.remove("clicked");
+        $divAnswers.children[i].innerText = possibleAnswersList[sortedAnswer];
+        possibleAnswersList.splice(sortedAnswer, 1);
+    }
 
-//     // Crie uma cópia da lista de respostas possíveis sem modificar a original
-//     let possibleAnswersCopy = [...questionsCopy[sortedQuestion].possibleAnswers];
+    $nextQuestion.classList.add("hidden");
+    $seeResult.classList.add("hidden");
 
-//     for (let i = 0; i <= 3; i++) {
-//         let sortedAnswer = Math.floor(Math.random() * possibleAnswersCopy.length);
-//         $divAnswers.children[i].classList.remove("clicked");
-//         $divAnswers.children[i].innerText = possibleAnswersCopy[sortedAnswer];
-//         possibleAnswersCopy.splice(sortedAnswer, 1);
-//     }
-
-//     $nextQuestion.classList.add("hidden");
-//     $seeResult.classList.add("hidden");
-
-//     for (let i = 0; i < $divAnswers.children.length; i++){
-//         $divAnswers.children[i].disabled = false;
-//     }
-
-//     console.log(questionsCopy[sortedQuestion].correctAnswer);
-
-//     console.log(questionsCopy.length);
-// }
+    for (let i = 0; i < $divAnswers.children.length; i++){
+        $divAnswers.children[i].disabled = false;
+    }
+}
 
 
-// $divAnswers.addEventListener("click", function(event) {
-//     if (event.target.tagName === "BUTTON") {
-//         event.target.classList.add("clicked");
-//         if (event.target.innerText === questionsCopy[sortedQuestion].correctAnswer) {
-//             totalPoints += questionsCopy[sortedQuestion].points;
-//             alert("Correto!")
-//         } else {
-//             alert("Incorreto! A resposta certa é: " + questionsCopy[sortedQuestion].correctAnswer);
-//         }
+$divAnswers.addEventListener("click", function(event) {
+    if (event.target.tagName === "BUTTON") {
+        event.target.classList.add("clicked");
+        if (event.target.innerText === questionsList[sortedQuestion].correctanswer) {
+            totalPoints += questionsList[sortedQuestion].points;
+            alert("Correto!")
+        } else {
+            alert("Incorreto! A resposta certa é: " + questionsList[sortedQuestion].correctanswer);
+        }
 
-//         for (let i = 0; i < $divAnswers.children.length; i++){
-//             $divAnswers.children[i].disabled = true;
-//         }
+        for (let i = 0; i < $divAnswers.children.length; i++){
+            $divAnswers.children[i].disabled = true;
+        }
 
-//         // Remova a pergunta da lista após verificar a resposta
-//         questionsCopy.splice(sortedQuestion, 1);
+        // Remova a pergunta da lista após verificar a resposta
+        questionsList.splice(sortedQuestion, 1);
+        console.log(questionsList);
 
-//         // Verifique se ainda há perguntas restantes
-//         if (questionsCopy.length > 0) {
-//             $nextQuestion.classList.remove("hidden");
-//         } else {
-//             // Caso contrário, o quiz terminou
-//             $seeResult.classList.remove("hidden");
-//         }
-//     }
-// });
+        // Verifique se ainda há perguntas restantes
+        if (questionsList.length > 0) {
+            $nextQuestion.classList.remove("hidden");
+        } else {
+            // Caso contrário, o quiz terminou
+            $seeResult.classList.remove("hidden");
+        }
+    }
+});
 
-// $nextQuestion.addEventListener("click", () => {
-//     sortQuestion();
-// })
+$nextQuestion.addEventListener("click", () => {
+    sortQuestion();
+})
 
-// $seeResult.addEventListener("click", () => {
-//     alert(`Resultado: A sua pontuação final foi: ${totalPoints}`);
-// })
+$seeResult.addEventListener("click", () => {
+    alert(`Resultado: A sua pontuação final foi: ${totalPoints}`);
+    location.reload(true);
+})
 
-// window.addEventListener("load", () => {
-//     sortQuestion();
-// })
+window.addEventListener("load", async () => {
+    questionsList = await questions();
+    sortQuestion();
+})
