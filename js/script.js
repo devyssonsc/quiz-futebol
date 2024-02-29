@@ -187,7 +187,6 @@ $divAnswers.addEventListener("click", function(event) {
 
         // Remova a pergunta da lista após verificar a resposta
         questionsList.splice(sortedQuestion, 1);
-        console.log(questionsList);
 
         // Verifique se ainda há perguntas restantes
         if (questionsList.length > 0) {
